@@ -2,26 +2,7 @@ An I/O library for long running applications that will allow them to communicate
 
 
 ##Usage
-The basic design of a program using chatIO will be:
-
-	import chatIO
-	
-	class MainIO(chatIO.IO):
-		def __init__(self, initial_message):
-			#configure based on initial message.
-			#if no configuration it is common to just call:
-			self.read(initial_message)
-		
-		def read(self, message):
-			#do stuff with message
-			self.write("Response") # inform user of the success of the operation
-		
-	
-	if __name__ == "__main__":
-		connection = chatIO.Connection("username", "password", "server", MainIO) #note the lack of parens after MainIO
-		#each time a user chats the user that connection logged in as, a new MainIO will be instantiated. 
-		#subsequent messages from the same user will call the existing MainIO instance for the user's read methon.
-		
+The basic design of a program using chatIO can be seen in [usage_example.py](https://github.com/Sheyne/chatIO/blob/master/usage_example.py)	
 		
 
 ##Python API
