@@ -15,7 +15,12 @@ The basic design of a program using chatIO can be seen in [usage_example.py](htt
 
 > > this will be the basic means of communication with a user. It will be expected to be subclassed.
 
-> > **def** `__init__(self, initial_message):`
+> > **def** `__init__(self, connection, initial_message):`
+
+
+> > > `connection` is the `Connection` object that received the message.
+
+> > > > It's main purpose is so that write knows who to send written messages to.
 
 > > > `initial_message` is the message the `Connection` class received when the user first connected.
 
@@ -42,4 +47,4 @@ The basic design of a program using chatIO can be seen in [usage_example.py](htt
 > > > `io` is a `chatIO.IO` like class that will be instantiated anytime a new user connects.
 > > > When the first message is received from a given user, `io` called with the initial message as a parameter.
 
-> > > > `io` needs to respond to `io("<INITIAL MESSAGE HERE>")` and `io.read("<MESSAGE HERE>")`.
+> > > > `io` needs to respond to `io(connection = <The connection instance>, initial_message = "<INITIAL MESSAGE HERE>")` and `io.read(message = "<MESSAGE HERE>")`.
