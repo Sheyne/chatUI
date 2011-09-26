@@ -63,8 +63,18 @@ class Connection(object):
 		self.exit = False
 		while not self.exit:
 			#the real function would wait for a message to come in
+			from time import sleep
+			sleep(5)
 			yield "Fake_Username", "Fake Message"
-
+		try:
+			self.exit()
+		except TypeError: #no exit function was specified
+			pass
+	
 	def __del__(self):
+		self.exit = self.disconnect
+		
+	def disconnect(self):
 		"""Deals with cleaning up the connection."""
 		##disconnect from chat server
+	
