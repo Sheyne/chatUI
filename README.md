@@ -20,7 +20,7 @@ The basic design of a program using chatIO can be seen in [usage_example.py](htt
 
 > > > `connection` is the `Connection` object that received the message.
 
-> > > > It's main purpose is so that write knows who to send written messages to.
+> > > > It's main purpose is so that `write` knows who to send written messages to.
 
 > > > `initial_message` is the message the `Connection` class received when the user first connected.
 
