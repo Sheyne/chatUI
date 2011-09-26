@@ -26,18 +26,14 @@ class IO(object):
 class Connection(object):
 	"""this initilizes logging in and setting chat status:"""
 	
-	def __init__(self, user, password, server, io):
-		"""user, password and server mediate connecting to the chat server"""
-		
+	def __init__(self, chat, io):
+		"""`chat` mediates connecting to the chat server"""
 		"""io is a chatIO.IO like class that will be instantiated anytime a new user connects. When the first message is received from a given user, io called with the initial message as a parameter."""
 		
 		"""io needs to respond to io(connection = The connection instance , initial_message = " The initial message ") and io.read(message = " The message ")."""
 		
-		##connect to server
-		##login with credentials
-		
-		
-		##listen for messages
+		# tell `chat` what method to call when a message is received.
+		##chat.read_method=self.
 		
 		#initialize empty dictionary of connected users:
 		self.connected_users={}
