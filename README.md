@@ -4,6 +4,8 @@ An I/O library for long running applications that will allow them to communicate
 ##Usage
 The basic design of a program using chatIO will be:
 
+	import chatIO
+	
 	class MainIO(chatIO.IO):
 		def __init__(self, initial_message):
 			#configure based on initial message.
