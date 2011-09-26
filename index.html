@@ -1,3 +1,43 @@
-An I/O library for long running applications that will allow them to communicate progress updates to their users over IM protocols like Jabber.
-<br />
 Checkout our <a href='https://github.com/Sheyne/chatIO/blob/master/README.md'>readme</a>.
+
+README contents on september 25 2011 at 8:53PM mst:
+
+<div class="wikistyle"><p>An I/O library for long running applications that will allow them to communicate progress updates to their users over IM protocols like Jabber.</p>
+
+<h2>Usage</h2>
+
+<p>The basic design of a program using chatIO can be seen in <a href="https://github.com/Sheyne/chatIO/blob/master/usage_example.py">usage_example.py</a> </p>
+
+<h2>Python API</h2>
+
+<p><strong>package <code>chatIO</code></strong></p>
+<blockquote>
+<p><strong>class</strong> <code>IO</code> </p>
+<blockquote>
+<p>this will be the basic means of communication with a user. It will be expected to be subclassed.</p>
+
+<p><strong>def</strong> <code>__init__(self, initial_message):</code></p>
+<blockquote>
+<p><code>initial_message</code> is the message the <code>Connection</code> class received when the user first connected.</p>
+</blockquote>
+<p><strong>def</strong> <code>write(self, message)</code>:</p>
+<blockquote>
+<p>This method takes <code>message</code> and sends it over the current chat instance to a the currently connected client.</p>
+</blockquote>
+<p><strong>def</strong> <code>read(self, message)</code>:</p>
+<blockquote>
+<p>This method will be subclassed to allow an chatIO instance to receive chat messages. It will be invoked in a new thread.</p>
+</blockquote>
+</blockquote>
+<p><strong>class</strong> <code>Connection</code></p>
+<blockquote>
+<p>this initilizes logging in and setting chat status:</p>
+
+<p><strong>def</strong> <code>__init__(self, user, password, server, io)</code>:</p>
+<blockquote>
+<p><code>user</code>, <code>password</code> and <code>server</code> mediate connecting to the chat server</p>
+
+<p><code>io</code> is a <code>IO</code> subclass that will be instantiated anytime a new user connects.</p>
+</blockquote>
+</blockquote>
+</blockquote></div>
