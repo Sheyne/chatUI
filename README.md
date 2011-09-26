@@ -39,7 +39,7 @@ The basic design of a program using chatIO can be seen in [usage_example.py](htt
 
 > > > `user`, `password` and `server` mediate connecting to the chat server
 
-> > > `io` is a `chatIO.IO` like object that will be instantiated anytime a new user connects.
+> > > `io` is a `chatIO.IO` like class that will be instantiated anytime a new user connects.
 > > > When the first message is received from a given user, `io` called with the initial message as a parameter.
 
 > > > > `io` needs to respond to `io("<INITIAL MESSAGE HERE>")` and `io.read("<MESSAGE HERE>")`.
