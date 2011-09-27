@@ -33,7 +33,7 @@ class Connection(object):
 		"""io needs to respond to io(connection = The connection instance , initial_message = " The initial message ") and io.read(message = " The message ")."""
 		
 		# tell `chat` what method to call when a message is received.
-		##chat.read_method=self.
+		chat.read_method=self.got_message
 		
 		#initialize empty dictionary of connected users:
 		self.connected_users={}
@@ -41,34 +41,18 @@ class Connection(object):
 		#set the io class:
 		self.io_class=io
 		
-		#start the mainloop:
-		thread.start_new_thread(self.mainloop)
 
-	def mainloop(self):
-		#when a message is received:
-		for username, message in self.receive_messages(): 
-			try:
-				#try to find io_object in connected_users dictionary
-				io_object=self.connected_users[username]
-				#if an io_object is found, call its read method in a new thread
-				thread.start_new_thread(io_object.read, message)
-			except KeyError:
-				self.connected_users[username] = self.io_class(connection = self, initial_message = message)
-				
-	def receive_messages(self):
-		self.exit = False
-		while not self.exit:
-			#the real function would wait for a message to come in
-			from time import sleep
-			sleep(5)
-			yield "Fake_Username", "Fake Message"
+	def got_message(self, sender, message):
 		try:
-			self.exit()
-		except TypeError: #no exit function was specified
-			pass
-	
+			#try to find io_object in connected_users dictionary
+			io_object=self.connected_users[username]
+			#if an io_object is found, call its read method in a new thread
+			thread.start_new_thread(io_object.read, message)
+		except KeyError:
+			self.connected_users[username] = self.io_class(connection = self, initial_message = message)
+
 	def __del__(self):
-		self.exit = self.disconnect
+		self.disconnect()
 		
 	def disconnect(self):
 		"""Deals with cleaning up the connection."""
