@@ -8,7 +8,7 @@ class FakeLibrary(chat_library.ChatLibrary):
 		self.user=user
 		self.password=password
 		self.server=server
-		thread.start_new_thread(self.mainloop)
+		thread.start_new_thread(self.mainloop,())
 		
 	def mainloop(self):
 		while True:
@@ -22,3 +22,5 @@ class FakeLibrary(chat_library.ChatLibrary):
 	
 	def _disconnect_(self):
 		print "disconnecting from server"
+	
+con=chatIO.Connection(FakeLibrary("sheyne","pass", "talk.google.com"), chatIO.IO)
