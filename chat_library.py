@@ -8,6 +8,7 @@ class ChatLibrary(object):
 		
 		Anytime a message is received class `read_method`.
 		Parameters for `read_method` are expected to be: (sender, message), where sender is who the message is from and message is the text of the message."""
+		##print self.read_method
 		self.read_method=read_method
 		self.read_queue=[]
 		self.connect(user, password, server)
@@ -29,7 +30,7 @@ class ChatLibrary(object):
 	
 	def read(self, sender, message):
 		try:
-			self.read_message(sender, message)
+			self.read_method(sender, message)
 		except TypeError:
 			#self.read_message is not callable, add 
 			self.read_queue.append((sender,message))
@@ -40,6 +41,7 @@ class ChatLibrary(object):
 	@read_method.setter
 	def read_method(self, read_method):
 		self._read_method=read_method
+
 		if isinstance(self._read_method, collections.Callable):
 			for sender, message in self.read_queue:
 				self.read(sender, message)
