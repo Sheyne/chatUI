@@ -27,7 +27,7 @@ class ChatLibrary(object):
 	def write(self, to, message):
 		self._write_(to, message)
 	
-	def read_something(self, sender, message):
+	def read(self, sender, message):
 		try:
 			self.read_message(sender, message)
 		except TypeError:
@@ -42,7 +42,7 @@ class ChatLibrary(object):
 		self._read_method=read_method
 		if isinstance(self._read_method, collections.Callable):
 			for sender, message in self.read_queue:
-				self.read_something(sender, message)
+				self.read(sender, message)
 			self.read_queue=[]
 	
 	"""Methods to override."""
