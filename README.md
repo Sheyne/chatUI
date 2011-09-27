@@ -40,9 +40,9 @@ The basic design of a program using chatIO can be seen in [usage_example.py](htt
 
 > > this initilizes logging in and setting chat status:
 
-> > **def** `__init__(self, user, password, server, io)`:
+> > **def** `__init__(self, chat, io)`:
 
-> > > `user`, `password` and `server` mediate connecting to the chat server
+> > > `chat is a `ChatLibrary` like object, which will wrap socket communications to the chat server.
 
 > > > `io` is a `chatIO.IO` like class that will be instantiated anytime a new user connects.
 > > > When the first message is received from a given user, `io` called with the initial message as a parameter.
