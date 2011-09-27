@@ -18,7 +18,7 @@ class ChatLibrary(object):
 		self._connect_(user, password, server)
 		
 	def disconnect(self):
-		if self.conected:
+		if self.connected:
 			self._disconnect_()
 	
 	def __del__(self):
