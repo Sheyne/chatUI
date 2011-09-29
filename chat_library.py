@@ -8,7 +8,6 @@ class ChatLibrary(object):
 		
 		Anytime a message is received class `read_method`.
 		Parameters for `read_method` are expected to be: (sender, message), where sender is who the message is from and message is the text of the message."""
-		##print self.read_method
 		self.read_method=read_method
 		self.read_queue=[]
 		self.connect(user, password, server)
