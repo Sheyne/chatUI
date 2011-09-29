@@ -1,33 +1,22 @@
-import chat_library
-import chatIO
-import threading
-		
+import os
+import time
 
-class FakeLibrary(chat_library.ChatLibrary):
-	def _connect_(self, user, password, server):
-		print "connecting to user:", '"'+user+'"', "with password: ", '"'+password+'"', "on server:", '"'+server+'"'
-		self.user=user
-		self.password=password
-		self.server=server
-		threading.Thread(target=self.mainloop).start()
-		
-	def mainloop(self):
-		while True:
-			self.read(*raw_input("").split(":"))
+import chatIO
+
+
+class SampleBot(chatIO.IO):
+	pass
+
+
+if __name__ == "__main__":
+	bot = SampleBot()
+	@bot.command
+	def say(message):
+		print "saying message:",message
+		os.popen("say "+repr(message))
+	@bot.command
+	def default(message):
+		print "hit default:",message
 	
-	def _write_(self, to, message):
-		print "Sending message to:",to
-		print "-----------------------------------"
-		print message
-		print "-----------------------------------"
-	
-	def _disconnect_(self):
-		print "disconnecting from server"
-	
-class TestIO(chatIO.IO):
-	def init(self):
-		print "Inited with message", self.initial_message
-	def read(self, message):
-		print ">>> ", message
-		self.write("got message ")
-con=chatIO.Connection(FakeLibrary("sheyne","pass", "talk.google.com"), TestIO)
+	bot.setState('available', "Active for duty")
+	bot.start("comprehend@sheyne.com", "blah1112")
