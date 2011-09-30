@@ -1,41 +1,56 @@
 import sys
-import os
+import pyttsx
 import unicodedata
 import chatUI
+import time
+import threading
+import Queue
 
-class DefaultConversation(chatUI.Conversation):
-	def get(self, message):
-		print message
+
+
+def main():
+	bot = chatUI.UI()
 	
-class ShellConversation(chatUI.Conversation):
-	def setup(self, initial_message):
-		pass
-	def get(self, c):
-		if c == 'shutdown':
-			sys.exit()
-		elif c == 'restart':
-			print 'restarting, can\'t'
-		else:
+	@bot.conversationType
+	class help(chatUI.Conversation):
+		usage="conversation_starter [args]"
+		def setup(self):
+			self.help()
+			self.finish()
+	
+	@bot.conversationType
+	class shell(chatUI.ShellConversation):
+		description = "shell commands conversation"
+		usage = "shell [shutdown, restart]"
+		@chatUI.command
+		def time(self):
+			self.put(time.strftime('%X %x %Z'))
+		@chatUI.command
+		def timer(self, args):
+			try:
+				time.sleep(float(args[0]))
+			except ValueError:
+				self.put("Bad float")
+				return
+			self.put(" ".join(args[1:]))
+		@chatUI.command
+		def default(self):
+			pass
+
+	bot.start("comprehend@sheyne.com", "blah1112")
+	
+	while True:
+		try:
+			bot.mainloop()
+		except chatUI.UIUserWarning as message: 
 			print message
-	
-class SayConversation(chatUI.Conversation):
-	def setup(self, initial_message):
-		args_s=self.initial_message.split(" ")[1:]
-		self.args=" ".join(args_s)+" "
-	def get(self, message):
-		process="say "+self.args+repr(unicodedata.normalize('NFKD', message).encode('ascii','ignore'))
-		print process
-		os.popen(process)
+			bot.send(message[1][0],"%s, type help for help." % message[0])
+		except KeyboardInterrupt:
+			break
 
 
 if __name__ == "__main__":
-	bot = chatUI.UI()
-	
-	#bot.conversationTypes["default"]=DefaultConversation
-	bot.conversationTypes["say"]=SayConversation
-	bot.conversationTypes["shell"]=ShellConversation
-	bot.conversationTypes["/"]=ShellConversation
-	
-	bot.start("comprehend@sheyne.com", "blah1112")
-	
-	
+	try:
+		main()
+	except chatUI.UIError as err:
+		print err

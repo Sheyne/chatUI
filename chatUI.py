@@ -1,21 +1,32 @@
 import xmpp
-
+import inspect
+from threading import Thread
 
 class UIError(Exception):
 	pass
+class UIUserMessage(UIError):
+	pass
 class UIWarning(UIError):
 	pass
-class UIUserWarningMessage(UIWarning):
+class UIUserWarning(UIWarning):
 	pass
-class UICommandNotFoundWarningMessage(UIUserWarningMessage):
+class UIUserCommandNotFound(UIUserWarning, UIUserMessage):
 	pass
 
+
 class Conversation(object):
+	description = "Conversation"
+	def help(self):
+		self.put("Usage: %s" % self.usage)
 	def __init__(self, ui, correspondant, initial_message):
 		self.ui=ui
 		self.initial_message=initial_message
 		self.correspondant=correspondant
-		self.setup(initial_message)
+		self.ui.conversations[self.correspondant]=self
+		try:
+			self.setup(initial_message)
+		except TypeError:
+			self.setup() #dont pass args
 	
 	def setup(self,initial_message=""):
 		self.get(self.initial_message)
@@ -28,20 +39,82 @@ class Conversation(object):
 			self.finish()
 		else:
 			self.get(message)
-			
+	
+	def __str__(self):
+		return "%s with %s." % (self.description, self.correspondant)
+	
 	def finish(self):
-		del self.ui.conversations[self.correspondant]
+		try:
+			del self.ui.conversations[self.correspondant]
+		except KeyError:
+			pass
 	
 	def get(self, message):
 		pass
 	
 	def put(self, message):
 		self.ui.send(self.correspondant, message)
+
+class HelpfulConversation(Conversation):
+	def __init__(self, ui, correspondant, initial_message):
+		super(HelpfulConversation, self).__init__(ui, correspondant, initial_message)
+		try:
+			if initial_message.split(" ")[1] == 'help':
+				self.help()
+				self.finish()
+		except IndexError:
+			pass
+		
+	def _get(self, message):
+		if message=='help':
+			self.help()
+			self.finish()
+		elif message in ('describe', 'description'):
+			self.help()
+			self.finish()
+		super(HelpfulConversation, self)._get(message)
+
+def command(func):
+	func.is_command=True
+	return func
 	
-	def end(self):
-		self.ui.removeConversation(self)
+class ShellConversation(HelpfulConversation):
+	def setup(self):
+		self.commands = {}
+		for name, value in inspect.getmembers(self, inspect.ismethod):
+			try:
+				if value.is_command:
+					self.commands[name] = value
+			except AttributeError:
+				pass
+		self.get(self.initial_message)
+		dont_finish=False
+		try:
+			self.processArgs(self.initial_message.split(" ")[1:])
+		except IndexError:
+			dont_finish = True
+		if not dont_finish:
+			self.finish()
+
+	def get(self, message):
+		self.processArgs(message.split(" "))
+	
+	def processArgs(self, args):
+		try:
+			self.runcommand(args[0],args[1:])
+		except KeyError:
+			self.runcommand("default",args)
+	
+	def runcommand(self, command, args):
+		try:
+			self.commands[command](args)
+		except TypeError:
+			self.commands[command]()
+
 
 class UI(object):
+	def conversationType(self, cls):
+		self.conversationTypes[cls.__name__] = cls
 	def command(self, func):
 		pass
 	def __init__(self, conversationTypes={}, server=("talk.google.com", 5223), debug=[]):
@@ -65,7 +138,7 @@ class UI(object):
 		
 		auth_success=self.connection.auth(user, password)
 		if not auth_success:
-			raise UIError("Authentication for %s.", user)
+			raise UIError("Authentication for %s." % user)
 			return False
 		if auth_success!="sasl":
 			raise UIWarning("sasl not used with %s."%server)
@@ -78,8 +151,6 @@ class UI(object):
 			#available -- dnd -- xa
 			pres=xmpp.Presence(priority=5, show="idle", status="Comprehend -- bot")
 			self.connection.send(pres)
-
-		self.mainloop()
 	
 	
 	def send(self, to, message):
@@ -87,12 +158,7 @@ class UI(object):
 	
 	def mainloop(self):
 		while True:
-			try:
-				self.connection.Process()
-			except UIUserWarningMessage as e:
-				self.send(e.args[1][0], "Unknown command: %s" % str(e.args[1][1]))
-			except KeyboardInterrupt: 
-				break
+			self.connection.Process()
 
 
 	def received_presence(self, connection, presence):
@@ -100,7 +166,7 @@ class UI(object):
 	def received_message(self, connection, message):
 		from_user, content = message.getFrom(), message.getBody()
 		try:
-			self.conversations[from_user]._get(content)
+			Thread(target=self.conversations[from_user]._get, args=(content ,)).start()
 		except KeyError:
 			command = content.split(" ")[0]
 			try:
@@ -109,8 +175,8 @@ class UI(object):
 				try:
 					conversation_type = self.conversationTypes["default"]
 				except KeyError:
-					raise UICommandNotFoundWarningMessage("command: '%s' not found" % command, (from_user, content))
+					raise UIUserCommandNotFound("command: '%s' not found" % command, (from_user, content))
 			try:
-				self.conversations[from_user]=conversation_type(self, from_user, content)
+				Thread(target=conversation_type, args=(self, from_user, content)).start()
 			except TypeError:
 				raise(UIError("Not a conversation-like object"))
