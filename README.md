@@ -2,7 +2,7 @@ An I/O library for long running applications that will allow them to communicate
 
 
 ##Usage
-The basic design of a program using chatIO can be seen in [usage_example.py](https://github.com/Sheyne/chatIO/blob/master/usage_example.py)	
+The basic design of a program using chatIO can be seen in [usage_example.py](https://github.com/Sheyne/chatUI/blob/master/example.py)	
 		
 
 ##Python API
