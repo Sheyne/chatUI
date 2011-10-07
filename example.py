@@ -12,7 +12,7 @@ def main():
 	# Standard main function. 
 	bot = chatUI.UI(server=("talk.google.com", 5223))
 	# Setup a connection to a jabber server. 
-	# a dictionary of conversationTypes can also be passed.
+	# in addition a dictionary of conversationTypes can also be passed.
 	
 	
 	# add a conversation type
