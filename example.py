@@ -40,15 +40,6 @@ def main():
 	class shell(chatUI.ShellConversation):
 		description = "shell commands conversation"
 		usage = "shell [shutdown, restart]"
-		@chatUI.command
-		def pull(self):
-			import os
-			import urllib2
-			os.remove("example.py")
-			read=urllib2.urlopen('https://raw.github.com/Sheyne/chatUI/master/example.py').read()
-			with open("example.py", w) as file:
-				file.write(read)
-		@chatUI.command
 		def restart(self):
 			import os
 			import sys
