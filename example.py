@@ -1,7 +1,6 @@
-import sys
-import pyttsx
-import unicodedata
 import chatUI
+import sys
+import unicodedata
 import time
 import threading
 import Queue
@@ -12,7 +11,7 @@ def main():
 	# Standard main function. 
 	bot = chatUI.UI(server=("talk.google.com", 5223))
 	# Setup a connection to a jabber server. 
-	# a dictionary of conversationTypes can also be passed.
+	# in addition a dictionary of conversationTypes can also be passed.
 	
 	
 	# add a conversation type
@@ -22,15 +21,39 @@ def main():
 	# new conversation.
 	@bot.conversationType
 	class help(chatUI.Conversation):
+		description = 'display help'
 		usage="conversation_starter [args]"
 		def setup(self):
 			self.help()
 			self.finish()
 	
+	
+	@bot.conversationType
+	class commands(chatUI.Conversation):
+		description = 'list all posible commands'
+		def setup(self, args):
+			for command in self.ui.conversationTypes:
+				self.put("# %s #\n%s" % (command, self.ui.conversationTypes[command].description))
+			self.finish()
+
 	@bot.conversationType
 	class shell(chatUI.ShellConversation):
 		description = "shell commands conversation"
 		usage = "shell [shutdown, restart]"
+		@chatUI.command
+		def pull(self):
+			import os
+			import urllib2
+			os.remove("example.py")
+			read=urllib2.urlopen('https://raw.github.com/Sheyne/chatUI/master/example.py').read()
+			with open("example.py", w) as file:
+				file.write(read)
+		@chatUI.command
+		def restart(self):
+			import os
+			import sys
+			os.system('python example.py')
+			sys.exit()
 		@chatUI.command
 		def time(self):
 			self.put(time.strftime('%X %x %Z'))
