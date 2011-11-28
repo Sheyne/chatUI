@@ -99,14 +99,25 @@ class ShellConversation(HelpfulConversation):
 	def processArgs(self, args):
 		try:
 			self.runcommand(args[0],args[1:])
-		except KeyError:
-			self.runcommand("default",args)
+		except UIUserCommandNotFound as e:
+			try:
+				# if the command was not found,  try the default, if that is not found
+				# raise the original exception
+				print "trying default", e
+				self.runcommand("default",args)
+			except UIUserCommandNotFound:
+				raise e
 	
 	def runcommand(self, command, args):
+		print "Running:",command,args
 		try:
 			self.commands[command](args)
 		except TypeError:
+			print "type error"
 			self.commands[command]()
+		except KeyError as e:
+			print "key error",e
+			raise UIUserCommandNotFound("command: '%s' not found" % command, (self.correspondant, command, args))
 
 
 class UI(object):
