@@ -146,7 +146,7 @@ class UI(object):
 		
 		auth_success=self.connection.auth(user, password)
 		if not auth_success:
-			raise UIError("Authentication for %s." % user)
+			raise UIError("Authentication for %s failed." % user)
 			return False
 		if auth_success!="sasl":
 			raise UIWarning("sasl not used with %s."%server)
