@@ -2,16 +2,11 @@ import xmpp
 import inspect
 from threading import Thread
 
-class UIError(Exception):
-	pass
-class UIUserMessage(UIError):
-	pass
-class UIWarning(UIError):
-	pass
-class UIUserWarning(UIWarning):
-	pass
-class UIUserCommandNotFound(UIUserWarning, UIUserMessage):
-	pass
+class UIError(Exception): pass
+class UIUserMessage(UIError): pass
+class UIWarning(UIError): pass
+class UIUserWarning(UIWarning): pass
+class UIUserCommandNotFound(UIUserWarning, UIUserMessage): pass
 
 
 class Conversation(object):
