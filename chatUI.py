@@ -67,10 +67,8 @@ class HelpfulConversation(Conversation):
 	def _get(self, message):
 		if message=='help':
 			self.help()
-			self.finish()
 		elif message in ('describe', 'description'):
 			self.help()
-			self.finish()
 		super(HelpfulConversation, self)._get(message)
 
 def command(func):
