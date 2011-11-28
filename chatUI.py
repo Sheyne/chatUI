@@ -38,7 +38,11 @@ class Conversation(object):
 	def __str__(self):
 		return "%s with %s." % (self.description, self.correspondant)
 	
-	def finish(self):
+	def cleanup(self): pass
+	
+	def finish(self,cleanup=True):
+		if cleanup:
+			self.cleanup()
 		try:
 			del self.ui.conversations[self.correspondant]
 		except KeyError:
